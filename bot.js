@@ -8,7 +8,6 @@ dotenv.config();
 
 let web3;
 let web3Ws;
-let deadline;
 
 const createWeb3 = async() => {
     try{
@@ -51,7 +50,7 @@ const run = async() => {
         dataBalance = await checkBalance(process.env.ADDRESS_SENDER);
         balance = dataBalance.result;
         minBalance = web3.utils.toWei(process.env.MIN_AMOUNT, 'ether');
-        fee = web3.utils.toWei('0.003', 'ether');
+        fee = web3.utils.toWei('0.0002', 'ether');
 
         amountSend = balance - fee;
 
@@ -78,7 +77,7 @@ const transfer = async (amount, senderAddress, receiverAddress) => {
         from: senderAddress,
         to: receiverAddress,
         data: '0x',
-        gas: 500000,
+        gas: 34500,
         gasPrice: gasPrice,
         value: amount
     };
