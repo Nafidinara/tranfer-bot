@@ -55,35 +55,18 @@ const run = async() => {
 
         amountSend = balance - fee;
 
-        console.log(chalk.green(`Will send ${amountSend} to ${process.env.ADDRESS_RECEPIENT}`));
-
         if (amountSend >= parseInt(minBalance)){
+            console.log(chalk.green(`Will send ${amountSend} to ${process.env.ADDRESS_RECEPIENT}`));
             return transfer(amountSend,process.env.ADDRESS_SENDER,process.env.ADDRESS_RECEPIENT);
+        }else{
+            console.log('insufficient balance');
+            return false;
         }
     }
     catch(err){
         console.log(JSON.stringify(err));
         // process.exit();
     }
-}
-
-const random = async (min, max) => {
-    return Math.floor(
-        Math.random() * (max - min) + min
-    ) * 1000
-}
-
-function wait(milliseconds) {
-    return new Promise(resolve => setTimeout(resolve, milliseconds))
-}
-
-const getDeadline = async () => {
-    let deadlineGet;
-    await web3.eth.getBlock('latest', (error, block) => {
-        deadlineGet = block.timestamp + 300; // transaction expires in 300 seconds (5 minutes)
-    });
-
-    deadline = web3.utils.toHex(deadlineGet);
 }
 
 const transfer = async (amount, senderAddress, receiverAddress) => {
@@ -106,11 +89,15 @@ const transfer = async (amount, senderAddress, receiverAddress) => {
     return web3.eth.sendSignedTransaction(signedTx.rawTransaction)
         .on('transactionHash', (hash) => {
             console.log(`hash : https://bscscan.com/tx/${hash}`);
+            return true;
         })
         .on('error', (error => {
             console.log(JSON.stringify(error));
+            return false;
         }));
 }
 
-run();
+setInterval(async () => {
+    await run();
+},process.env.INTERVAL * 1000);
 
